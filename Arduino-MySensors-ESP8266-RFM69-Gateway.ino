@@ -5,9 +5,7 @@
 // Enable debug prints to serial monitor
 #define MY_DEBUG
 
-// Use a bit lower baudrate for serial prints on ESP8266 than default in MyConfig.h
-#define MY_BAUD_RATE 9600
-#define WIFI_REPORT_INTERVAL 60000
+#define WIFI_REPORT_INTERVAL 300000
 
 // Enables and select radio type (if attached)
 #define MY_RADIO_RFM69
@@ -19,12 +17,12 @@
 
 #define MY_GATEWAY_ESP8266
 
-#define MY_ESP8266_SSID "Mr-IoT.com"
+#define MY_WIFI_SSID "Mr-IoT.com"
 #include "settings.h"
 
 // Set the hostname for the WiFi Client. This is the hostname
 // it will pass to the DHCP server if not static.
-#define MY_ESP8266_HOSTNAME "RFM69-Gateway"
+#define MY_HOSTNAME "RFM69-Gateway"
 
 // Enable MY_IP_ADDRESS here if you want a static ip address (no DHCP)
 //#define MY_IP_ADDRESS 192,168,178,87
@@ -59,27 +57,27 @@ void setup()
 {
   // Setup locally attached sensors
   ArduinoOTA.onStart([]() {
-    debug("ArduinoOTA start\n");
+    DEBUG_OUTPUT("ArduinoOTA start\n");
   });
   ArduinoOTA.onEnd([]() {
-    debug("\nArduinoOTA end\n");
+    DEBUG_OUTPUT("\nArduinoOTA end\n");
   });
   ArduinoOTA.setPassword((const char *)OTA_PASSWORD);
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    debug("OTA Progress: %u%%\r", (progress / (total / 100)));
+    DEBUG_OUTPUT("OTA Progress: %u%%\r", (progress / (total / 100)));
   });
   ArduinoOTA.onError([](ota_error_t error) {
-    debug("Error[%u]: ", error);
+    DEBUG_OUTPUT("Error[%u]: ", error);
     if (error == OTA_AUTH_ERROR) {
-      debug("Auth Failed\n");
+      DEBUG_OUTPUT("Auth Failed\n");
     } else if (error == OTA_BEGIN_ERROR) {
-      debug("Begin Failed\n");
+      DEBUG_OUTPUT("Begin Failed\n");
     } else if (error == OTA_CONNECT_ERROR) {
-      debug("Connect Failed\n");
+      DEBUG_OUTPUT("Connect Failed\n");
     } else if (error == OTA_RECEIVE_ERROR) {
-      debug("Receive Failed\n");
+      DEBUG_OUTPUT("Receive Failed\n");
     } else if (error == OTA_END_ERROR) {
-      debug("End Failed\n");
+      DEBUG_OUTPUT("End Failed\n");
     }
   });
   ArduinoOTA.begin();
