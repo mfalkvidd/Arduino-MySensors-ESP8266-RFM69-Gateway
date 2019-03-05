@@ -4,10 +4,12 @@
 
 // Enable debug prints to serial monitor
 #define MY_DEBUG
+#define MY_BAUD_RATE 74880 // To be able to see reset messages
 
 #define WIFI_REPORT_INTERVAL 300000
 
 // Enables and select radio type (if attached)
+#define MY_RFM69_NEW_DRIVER
 #define MY_RADIO_RFM69
 #define MY_IS_RFM69HW
 #define MY_RF69_IRQ_PIN D2
@@ -52,6 +54,8 @@
 MyMessage msgWifiRssi(CHILD_ID_WIFI_RSSI, V_LEVEL);
 #define CHILD_ID_RSSI1 1
 MyMessage msgRssi1(CHILD_ID_RSSI1, V_LEVEL);
+bool sendRssi = false;
+int16_t rssi;
 
 void setup()
 {
@@ -63,6 +67,7 @@ void setup()
     DEBUG_OUTPUT("\nArduinoOTA end\n");
   });
   ArduinoOTA.setPassword((const char *)OTA_PASSWORD);
+  ArduinoOTA.setHostname(MY_HOSTNAME);
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     DEBUG_OUTPUT("OTA Progress: %u%%\r", (progress / (total / 100)));
   });
@@ -100,13 +105,16 @@ void loop()
     send(msgWifiRssi.set(WiFi.RSSI(), 1));
     lastSend = millis();
   }
-}
-
-void receive(const MyMessage &message)
-{
-  int16_t rssi = _radio.RSSI;
-  if (message.sender == 1) {
+  if (sendRssi) {
+    sendRssi = false;
     send(msgRssi1.set(rssi, 0));
   }
 }
 
+void receive(const MyMessage &message)
+{
+  rssi = RFM69_getReceivingRSSI();
+  if (message.sender == 1) {
+    sendRssi = true;
+  }
+}
