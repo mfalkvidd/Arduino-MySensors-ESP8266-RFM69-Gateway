@@ -10,12 +10,18 @@
 
 // Enables and select radio type (if attached)
 #define MY_RFM69_NEW_DRIVER
+//#define MY_RX_MESSAGE_BUFFER_FEATURE
+#define MY_RFM69_ATC_MODE_DISABLED
+#define MY_RFM69_CSMA_LIMIT_DBM -75
 #define MY_RADIO_RFM69
 #define MY_IS_RFM69HW
 #define MY_RF69_IRQ_PIN D2
 #define MY_RF69_IRQ_NUM MY_RF69_IRQ_PIN
 #define MY_RF69_SPI_CS D8
-#define MY_RFM69_FREQUENCY RFM69_433MHZ // RFM69_433MHZ for development branch, RF69_433MHZ for master
+#define MY_RFM69_FREQUENCY RFM69_433MHZ
+
+#define MY_DEBUG_VERBOSE_RFM69 // Temporary
+#define MY_DEBUG_VERBOSE_GATEWAY
 
 #define MY_GATEWAY_ESP8266
 
@@ -99,7 +105,6 @@ void presentation()
 long lastSend = 0;
 void loop()
 {
-  // Send locally attech sensors data here
   ArduinoOTA.handle();
   if (millis() - lastSend > WIFI_REPORT_INTERVAL) {
     send(msgWifiRssi.set(WiFi.RSSI(), 1));
